@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class DemoStreamPage extends StatefulWidget {
@@ -19,12 +22,26 @@ class _DemoStreamPageState extends State<DemoStreamPage> {
     // Stream<int> streamNumber = Stream.fromIterable(Iterable.generate(10, (index) => index));
 
     // 3: Dung periodic
-    Stream<int> streamNumber = Stream.periodic(Duration(seconds: 1), (count) {
-      return count + 1;
+    // Stream<int> streamNumber = Stream.periodic(Duration(seconds: 1), (count) {
+    //   return count + 1;
+    // });
+
+    // var subscription = streamNumber.listen((event) {
+    //   print(event);
+    // });
+
+    StreamController<int> streamNumberController = StreamController();
+
+    StreamTransformer<int, int> streamTransformer = StreamTransformer.fromHandlers(handleData: (data, sink) {
+      sink.add(data * 2);
     });
 
-    streamNumber.listen((event) {
+    streamNumberController.stream.transform(streamTransformer).listen((event) {
       print(event);
+    });
+
+    Future.delayed(Duration(seconds: 2), () {
+      streamNumberController.sink.add(10);
     });
   }
 
